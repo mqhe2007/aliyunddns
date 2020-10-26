@@ -25,9 +25,9 @@ func init() {
 	主页：https://mengqinghe.com
 	`)
 	// 指定配置文件
-	viper.AddConfigPath(".")
-	viper.SetConfigName("config")
+	viper.SetConfigName("aliyunddns")
 	viper.SetConfigType("json")
+	viper.AddConfigPath("$HOME/aliyunddns/")
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Printf("启动失败: %s\n", err)
@@ -37,26 +37,26 @@ func init() {
 
 func main() {
 	domain := viper.Get("domain").(string)
-	accessKeyId := viper.Get("accessKeyId").(string)
+	accessKeyID := viper.Get("accessKeyId").(string)
 	accessSecret := viper.Get("accessSecret").(string)
 	duration := viper.Get("duration").(float64)
-	var publicIp string
+	var publicIP string
 	var Records []alidns.Record
-	client, _ = alidns.NewClientWithAccessKey("cn-hangzhou", accessKeyId, accessSecret)
+	client, _ = alidns.NewClientWithAccessKey("cn-hangzhou", accessKeyID, accessSecret)
 	timeTickChan := time.Tick(time.Hour * time.Duration(duration))
 	for {
-		publicIp = getPublicIp()
+		publicIP = getPublicIP()
 		Records = getSubDomainRecords(domain)
-		fmt.Printf("当前公网IP地址是: %v\n", publicIp)
+		fmt.Printf("当前公网IP地址是: %v\n", publicIP)
 		if len(Records) == 0 {
 			fmt.Println("当前域名未配置解析")
 			return
 		}
-		if publicIp != Records[0].Value {
+		if publicIP != Records[0].Value {
 			fmt.Printf("当前解析IP地址为%s\n", Records[0].Value)
 			fmt.Println("当前解析IP地址需要更新")
-			upgradeDomainRecord(Records[0].RecordId, Records[0].RR, publicIp)
-			fmt.Printf("当前解析IP地址已更新为: %s", publicIp)
+			upgradeDomainRecord(Records[0].RecordId, Records[0].RR, publicIP)
+			fmt.Printf("当前解析IP地址已更新为: %s", publicIP)
 		} else {
 			fmt.Println("当前解析无需更新")
 		}
@@ -66,8 +66,8 @@ func main() {
 }
 
 // 获取公网ip
-func getPublicIp() string {
-	res, err := http.Get("http://www.fbisb.com/ip.php ")
+func getPublicIP() string {
+	res, err := http.Get("http://myexternalip.com/raw")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -89,10 +89,10 @@ func getSubDomainRecords(Domain string) []alidns.Record {
 }
 
 // 更新域名解析记录
-func upgradeDomainRecord(RecordId string, RR string, IP string) {
+func upgradeDomainRecord(RecordID string, RR string, IP string) {
 	req := alidns.CreateUpdateDomainRecordRequest()
 	req.Scheme = "https"
-	req.RecordId = RecordId
+	req.RecordId = RecordID
 	req.RR = RR
 	req.Type = "A"
 	req.Value = IP
