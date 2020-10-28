@@ -28,7 +28,7 @@
 
 ### 1. 下载
 
-在 release 页面下载对应平台的可执行程序。
+在 [release](https://github.com/mqhe2007/aliyunddns/releases) 页面下载对应平台的可执行程序。
 
 ### 2. 创建配置文件
 
