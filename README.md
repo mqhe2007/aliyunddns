@@ -42,10 +42,10 @@ type Config struct {
   // 支持子域名，当值为主域名时，默认添加主机记录"@"
   Domain       string
   // 如何获取AccessKeyID和AccessSecret请参见：https://ram.console.aliyun.com/users/new
-	AccessKeyID  string
+  AccessKeyID  string
   AccessSecret string
   // CRON表达式格式参见：https://pkg.go.dev/github.com/robfig/cron
-	Cron         string
+  Cron         string
 }
 ```
 
